@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="600.0" minWidth="-Infinity" prefWidth="600.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="399.0" minWidth="10.0" prefWidth="200.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints maxHeight="40.0" minHeight="0.0" prefHeight="9.0" />
+      <RowConstraints maxHeight="600.0" minHeight="553.0" prefHeight="600.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <VBox prefHeight="593.0" prefWidth="153.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <children>
+            <Button fx:id="cnct" mnemonicParsing="false" onAction="#connect" text="Connect" />
+            <Button fx:id="button" mnemonicParsing="false" text="Set" />
+            <Button mnemonicParsing="false" onAction="#disconnect" text="Stop" />
+            <TextField fx:id="crdX" maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="116.0" text="20" />
+            <TextField fx:id="crdY" text="20" />
+            <TextField fx:id="crdTX" text="50" />
+            <TextField fx:id="crdTY" text="50" />
+            <Label fx:id="jLabel1" prefHeight="273.0" prefWidth="150.0" />
+         </children>
+      </VBox>
+      <Canvas fx:id="canvas" height="600.0" width="600.0" GridPane.rowIndex="1" />
+   </children>
+</GridPane>
