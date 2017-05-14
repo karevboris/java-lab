@@ -24,17 +24,20 @@ public class Ship extends Thread {
     private int targetX=60;
     private int targetY=60;
     boolean move = true;
+    boolean goal = false;
     public boolean stop = false;
     private Direction direction;
     public static int numClients=0;
+    public String shipName;
 
     public UUID getUUID() {
         return id;
     }
 
-    public Ship(ServerThread st, Socket cs) {
+    public Ship(ServerThread st, Socket cs, String shipName) {
         this.st = st;
         this.cs = cs;
+        this.shipName = shipName;
         numClients++;
         try {
             is = cs.getInputStream();
@@ -43,7 +46,7 @@ public class Ship extends Thread {
             dis = new DataInputStream(is);
             dos = new DataOutputStream(os);
 
-            start();
+            //start();
         } catch (IOException ex) {
             Logger.getLogger(Ship.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -123,7 +126,11 @@ public class Ship extends Thread {
                         posY = Integer.parseInt(stok.nextToken());
                         targetX = Integer.parseInt(stok.nextToken());
                         targetY = Integer.parseInt(stok.nextToken());
-                        if (isEnd()) stop=true;
+                        if (isEnd()) {
+                            //goal=true;
+                            //st.pos[getX()][getY()]=false;
+                            stop=true;
+                        }
                         if( st.f) st.sendToAll(1, id);
                         else {
                             stop=true;
@@ -132,7 +139,11 @@ public class Ship extends Thread {
                         }
                     }
                     if (type.equals("ok")){
-                        if(isEnd()) stop=true;
+                        if(isEnd()) {
+                            //goal=true;
+                            //st.pos[getX()][getY()]=false;
+                            stop=true;
+                        }
                         if( st.f) st.sendToAll(1, id);
                         else {
                             stop=true;
@@ -180,7 +191,7 @@ public class Ship extends Thread {
                         Logger.getLogger(Ship.class.getName()).log(Level.SEVERE, null, ex);
                     }else
                     try {
-                        st.addToLog(data+"\n");
+                        //st.addToLog(data+"\n");
                         dos.writeUTF(data);
                         dos.flush();
                     } catch (IOException ex) {

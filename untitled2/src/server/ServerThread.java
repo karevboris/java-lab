@@ -1,9 +1,9 @@
 package server;
 
 import javax.swing.*;
-import java.io.DataInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
+import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -19,6 +19,12 @@ public class ServerThread extends Thread{
 
     int port = 3124;
     InetAddress ip = null;
+
+    BData BD;
+    DataInputStream dis;
+    DataOutputStream dos;
+    InputStream is;
+    OutputStream os;
 
     ServerSocket ss;
     Hashtable<UUID, Ship> allClient =
@@ -179,6 +185,7 @@ public class ServerThread extends Thread{
 
     ServerThread(JTextArea log)
     {
+        BD = new BData();
         this.log = log;
         try {
             ip = InetAddress.getLocalHost();
@@ -212,9 +219,54 @@ public class ServerThread extends Thread{
         {
             try {
                 Socket cs = ss.accept();
-                Ship ct = new Ship(this, cs);
-                addToLog("connect" + ct.num);
-                allClient.put(ct.getUUID(), ct);
+
+                os = cs.getOutputStream();
+                is = cs.getInputStream();
+
+                dis = new DataInputStream(is);
+                dos = new DataOutputStream(os);
+
+                String userName = null, pass = null ,shipName = null;
+
+                String user = dis.readUTF();
+                StringTokenizer stok = new StringTokenizer(user, " ");
+                String type = stok.nextToken();
+                String answer = "false";
+
+                if(type.equals("checkRegistration")){
+                    userName=stok.nextToken();
+                    pass = stok.nextToken();
+                    shipName = stok.nextToken();
+                    answer = "false";
+                    if (BD.checkUser(userName)) {
+                        BD.Insert(userName, pass, shipName);
+                        answer = "true";
+                    }
+                    dos.writeUTF(answer);
+                    dos.flush();
+                }
+
+                if(type.equals("checkUser")){
+                    userName=stok.nextToken();
+                    pass = stok.nextToken();
+                    shipName = stok.nextToken();
+                    answer = "false";
+                    if (BD.checkLogIn(userName, pass)) {
+                        BD.setShipName(userName, shipName);
+                        answer = "true";
+                    }
+                    dos.writeUTF(answer);
+                    dos.flush();
+                }
+
+                if (answer.equals("true")) type = dis.readUTF();
+
+                if(type.equals("connect")) {
+                    Ship ct = new Ship(this, cs, shipName);
+                    addToLog("Ship '" + ct.shipName + "' connected\n");
+                    allClient.put(ct.getUUID(), ct);
+                    ct.start();
+                }
             } catch (IOException ex) {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
             }
