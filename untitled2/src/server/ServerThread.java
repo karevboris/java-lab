@@ -143,6 +143,7 @@ public class ServerThread extends Thread{
             int count=0;
             for (Map.Entry<UUID, Ship> entrySet :
                     allClient.entrySet()) {
+                if (entrySet.getValue().shipName.equals("android")) count--;
                 if (entrySet.getKey()==uuid) {
                     value.number = count;
                     break;
@@ -152,17 +153,22 @@ public class ServerThread extends Thread{
             value.sendData(null,num, flag);
         }
         else {
-            String data="all ";
-            data+=String.valueOf(allClient.size());
+            String data = "all ";
+            int an = 0;
+            for (Map.Entry<UUID, Ship> entrySet :
+                    allClient.entrySet()) {
+                if (entrySet.getValue().shipName.equals("android")) an++;
+            }
+            data += String.valueOf(allClient.size() - an);
             for (Map.Entry<UUID, Ship> entrySet :
                     allClient.entrySet()) {
                 Ship value = entrySet.getValue();
-                data += " "+String.valueOf(value.getX()) + " " + String.valueOf(value.getY()) + " " + String.valueOf(value.getTX()) + " " + String.valueOf(value.getTY());
+                if (!value.shipName.equals("android")) data += " " + String.valueOf(value.getX()) + " " + String.valueOf(value.getY()) + " " + String.valueOf(value.getTX()) + " " + String.valueOf(value.getTY());
             }
             for (Map.Entry<UUID, Ship> entrySet :
                     allClient.entrySet()) {
                 Ship value = entrySet.getValue();
-                value.sendData(data, num, true);
+                if (value.shipName.equals("android")) value.sendData(data, num, true);
             }
             //addToLog(data+"\n");
         }
@@ -189,6 +195,7 @@ public class ServerThread extends Thread{
         this.log = log;
         try {
             ip = InetAddress.getLocalHost();
+            addToLog(ip.getHostAddress().toString()+"\n");
         } catch (UnknownHostException ex) {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -267,6 +274,14 @@ public class ServerThread extends Thread{
                     allClient.put(ct.getUUID(), ct);
                     ct.start();
                 }
+
+                if(type.equals("android")) {
+                    Ship ct = new Ship(this, cs, "android");
+                    addToLog("Ship '" + ct.shipName + "' connected\n");
+                    allClient.put(ct.getUUID(), ct);
+                    //ct.start();
+                }
+
             } catch (IOException ex) {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
             }

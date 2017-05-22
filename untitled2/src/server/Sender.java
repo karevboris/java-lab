@@ -21,7 +21,7 @@ public class Sender extends Thread {
         while (st.isAlive())
             if (st.allClient.size() > 1) {
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Sender.class.getName()).log(Level.SEVERE, null, ex);
                 }
